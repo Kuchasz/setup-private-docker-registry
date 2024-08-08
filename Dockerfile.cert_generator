@@ -1,0 +1,25 @@
+# Use a lightweight base image that includes OpenSSL
+FROM alpine:latest
+
+# Install OpenSSL
+RUN apk add --no-cache openssl
+
+# Create a directory to store the certificate
+RUN mkdir -p /new_certs
+
+# Conditional certificate generation with a message
+RUN if [ ! -f /new_certs/domain.crt ] || [ ! -f /new_certs/domain.key ]; then \
+        echo "Certificates not found. Generating new SSL certificates..."; \
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /new_certs/domain.key \
+        -out /new_certs/domain.crt \
+        -subj "/CN=localhost"; \
+    else \
+        echo "Certificates already exist, skipping generation."; \
+    fi
+
+# Define the working directory
+WORKDIR /new_certs
+
+# Set the entrypoint to an empty command for running the container interactively
+CMD ["sh"]

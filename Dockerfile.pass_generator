@@ -1,0 +1,25 @@
+# Use a lightweight base image that includes OpenSSL
+FROM alpine:latest
+
+ARG USER_NAME
+ARG USER_PASSWORD
+
+# Install OpenSSL
+RUN apk add --no-cache apache2-utils
+
+# Create a directory to store the certificate
+RUN mkdir -p /new_auth
+
+# Conditional certificate generation with a message
+RUN if [ ! -f /new_auth/htpasswd ]; then \
+        echo "Passwords not found. Generating new passwords file..."; \
+        htpasswd -Bbn ${USER_NAME} ${USER_PASSWORD} > /new_auth/htpasswd; \
+    else \
+        echo "Passwords already exist, skipping generation."; \
+    fi
+
+# Define the working directory
+WORKDIR /new_auth
+
+# Set the entrypoint to an empty command for running the container interactively
+CMD ["sh"]
