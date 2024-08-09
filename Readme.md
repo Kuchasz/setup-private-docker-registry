@@ -4,6 +4,8 @@
 1. Docker registry ([distribution](https://github.com/distribution/distribution/))
 2. Web UI ([docker-registry-browser](https://github.com/klausmeyer/docker-registry-browser))
 3. Security certificates auto-generation
+4. Nginx reverse proxy
+5. HTTP => HTTPS redirection
 
 ### How to run
 1. [Prepare .env file](#env-file) in root folder, next to docker-compose.yml

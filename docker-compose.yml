@@ -1,71 +1,76 @@
 services:
-    cert_generator:
-        build:
-            context: .
-            dockerfile: ./Dockerfile.cert_generator
-        healthcheck:
-            test: ["CMD", "test", "-f", "/certs/domain.crt"]
-            interval: 10s
-            timeout: 5s
-            retries: 10
-        volumes:
-            - ./certs:/certs
-        entrypoint: /bin/sh -c "cp -r /new_certs/* /certs"
+  cert_generator:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.cert_generator
+    volumes:
+      - ./certs:/certs
+    entrypoint: /bin/sh -c "cp -r /new_certs/* /certs"
 
-    pass_generator:
-        build:
-            context: .
-            dockerfile: ./Dockerfile.pass_generator
-            args:
-                USER_NAME: ${USER_NAME}
-                USER_PASSWORD: ${USER_PASSWORD}
-        healthcheck:
-            test: ["CMD", "test", "-f", "/auth/htpasswd"]
-            interval: 10s
-            timeout: 5s
-            retries: 10
-        environment:
-            USER_NAME: ${USER_NAME}
-            USER_PASSWORD: ${USER_PASSWORD}
-        volumes:
-            - ./auth:/auth
-        entrypoint: /bin/sh -c "cp -r /new_auth/* /auth"
+  pass_generator:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.pass_generator
+      args:
+        USER_NAME: ${USER_NAME}
+        USER_PASSWORD: ${USER_PASSWORD}
+    environment:
+      USER_NAME: ${USER_NAME}
+      USER_PASSWORD: ${USER_PASSWORD}
+    volumes:
+      - ./auth:/auth
+    entrypoint: /bin/sh -c "cp -r /new_auth/* /auth"
 
-    registry:
-        restart: always
-        image: registry:2
-        ports:
-            - 5000:5000
-        depends_on:
-            cert_generator:
-                condition: service_started
-            pass_generator:
-                condition: service_started
-        environment:
-            REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
-            REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-            REGISTRY_AUTH: htpasswd
-            REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
-            REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
-            REGISTRY_STORAGE_DELETE_ENABLED: "true"
-        volumes:
-            - data:/var/lib/registry
-            - ./certs:/certs
-            - ./auth:/auth
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./html:/usr/share/nginx/html
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      cert_generator:
+        condition: service_started
+    ports:
+      - 80:80
+      - 443:443
 
-    frontend:
-        image: klausmeyer/docker-registry-browser:latest
-        environment:
-            - "DOCKER_REGISTRY_URL=https://registry:5000"
-            - "NO_SSL_VERIFICATION=true"
-            - "SECRET_KEY_BASE=${SECRET_KEY_BASE}"
-            - "SSL_CERT_PATH=/certs/domain.crt"
-            - "SSL_KEY_PATH=/certs/domain.key"
-            - "ENABLE_DELETE_IMAGES=true"
-        ports:
-            - "8443:8443"
-        volumes:
-            - ./certs:/certs
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 5000:5000
+    depends_on:
+      cert_generator:
+        condition: service_started
+      pass_generator:
+        condition: service_started
+    environment:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+    volumes:
+      - data:/var/lib/registry
+      - ./certs:/certs
+      - ./auth:/auth
+
+  frontend:
+    image: klausmeyer/docker-registry-browser:latest
+    environment:
+      - "DOCKER_REGISTRY_URL=https://registry:5000"
+      - "NO_SSL_VERIFICATION=true"
+      - "SECRET_KEY_BASE=${SECRET_KEY_BASE}"
+      - "SSL_CERT_PATH=/certs/domain.crt"
+      - "SSL_KEY_PATH=/certs/domain.key"
+      - "ENABLE_DELETE_IMAGES=true"
+      - "SCRIPT_NAME=/browser"
+      - "RAILS_RELATIVE_URL_ROOT=/browser"
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./certs:/certs
 
 volumes:
-    data:
+  data:
