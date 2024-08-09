@@ -22,5 +22,6 @@ SECRET_KEY_BASE=... //used for web ui encryption, generate that value with: `ope
 
 ### Todo's
 1. Support for let's encrypt
-2. Optional let's encrypt
-3. Container size limit to .env
+2. Make let's encrypt cert optional
+3. Add container size limit to .env
+4. Add pull/push usage examples
