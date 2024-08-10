@@ -1,6 +1,6 @@
 # Setup private docker container registry (easily)
 
-![Project logo](https://github.com/Kuchasz/setup-private-docker-registry/raw/main/images/logo.jpeg =250x250)
+<img src="https://github.com/Kuchasz/setup-private-docker-registry/raw/main/images/logo.jpeg" width="500" height="500">
 
 
 ### What's included
