@@ -10,9 +10,9 @@
 
 ### How to run
 
-0. Pull this repository code
-1. [Prepare .env file](#env-file) in root folder, next to docker-compose.yml
-2. Run `docker-compose up`
+1. Pull this repository code
+2. [Prepare .env file](#env-file) in root folder, next to docker-compose.yml
+3. Run `docker-compose up`
 
 ### Required .env file variables
 
