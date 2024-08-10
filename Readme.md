@@ -15,9 +15,7 @@
 1. [Prepare .env file](#env-file) in root folder, next to docker-compose.yml
 2. Run `docker-compose up`
 
-### .env file
-
-Here's the markdown rewritten as a pretty table:
+### Required .env file variables
 
 | Variable               | Description                                                                  | Example Value             |
 | ---------------------- | ---------------------------------------------------------------------------- | ------------------------- |
