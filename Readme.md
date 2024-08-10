@@ -4,10 +4,9 @@
 
 1. Docker registry ([distribution](https://github.com/distribution/distribution/))
 2. Web UI ([docker-registry-browser](https://github.com/klausmeyer/docker-registry-browser))
-3. Security certificates auto-generation
-4. Nginx reverse proxy
-5. HTTP => HTTPS redirection
-6. Container size limit is set to 1GB
+3. HTTPS protocol configuration
+4. Basic credentials authentication
+5. Basic config customizations
 
 ### How to run
 
