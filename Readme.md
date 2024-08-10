@@ -1,5 +1,8 @@
 # Setup private docker container registry (easily)
 
+![Project logo](https://github.com/Kuchasz/setup-private-docker-registry/raw/master/src/images/logo.jpeg "Project logo")
+
+
 ### What's included
 
 1. Docker registry ([distribution](https://github.com/distribution/distribution/))
