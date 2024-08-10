@@ -18,10 +18,14 @@
 USER_NAME=... //user name used to browse registry and push/pull images
 USER_PASSWORD=... //password
 SECRET_KEY_BASE=... //used for web ui encryption, generate that value with: `openssl rand -hex 64`
+PORT=... //port to listen
+DOMAIN=... //domain name to listen, eg. localhost
+CONTAINER_SIZE_LIMIT=... //maximum container size, eg. 100M or 1GB
 ```
 
 ### Todo's
 1. Support for let's encrypt
 2. Make let's encrypt cert optional
-3. Add container size limit to .env
+3. ~~Add container size limit to .env~~
 4. Add pull/push usage examples
+5. ~~Support for domain names~~
