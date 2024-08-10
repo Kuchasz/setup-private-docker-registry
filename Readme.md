@@ -1,7 +1,8 @@
 # Setup private docker container registry (easily)
 
+<p align="center">
 <img src="https://github.com/Kuchasz/setup-private-docker-registry/raw/main/images/logo.jpeg" width="500" height="500">
-
+</p>
 
 ### What's included
 
