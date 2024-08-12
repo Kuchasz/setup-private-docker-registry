@@ -1,0 +1,34 @@
+server {
+    listen 80;
+    server_name ${DOMAIN};
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen ${PORT} ssl;
+    server_name ${DOMAIN};
+
+    ssl_certificate /etc/nginx/certs/domain.crt;
+    ssl_certificate_key /etc/nginx/certs/domain.key;
+
+    root /usr/local/var/www;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+    }
+
+    location /browser/ {
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_pass https://frontend:8443/; # Important: Don't remove the `/` at the end.
+    }
+
+    location /v2/ {
+        client_max_body_size ${CONTAINER_SIZE_LIMIT};
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_pass https://registry:5000;
+    }
+}
